@@ -7,6 +7,12 @@ class Cat
     @w = 16
     @h = 16
     @tile_y = 0
+    @jump = false
+    @fall = false
+  end
+
+  def on_ground
+    !@jump && !@fall
   end
 
   def tile_x
@@ -24,5 +30,27 @@ class Cat
       angle_anchor_x, angle_anchor_y,
       source_x, source_y, source_w, source_h,
     )
+  end
+
+  def jump!
+    @jump = true
+  end
+
+  def tick args
+    if @jump
+      @y += 1
+      if @y >= 30
+        @jump = false
+        @fall = true
+      end
+    end
+
+    if @fall
+      @y -= 1
+
+      if @y <= 5
+        @fall = false
+      end
+    end
   end
 end
