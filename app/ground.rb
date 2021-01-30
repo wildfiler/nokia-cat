@@ -32,6 +32,17 @@ class Ground
         0, 0,
         0, 0, -1, -1,
       )
+
+      ffi_draw.draw_sprite_3(
+        i * 16 - offset, 43, 16, 5,
+        "sprites/ceiling.png",
+        0,
+        255, 255, 255, 255,
+        tiles[tile_offset + i].tile_x, tiles[tile_offset + i].tile_y, 16, 5,
+        false, false,
+        0, 0,
+        0, 0, -1, -1,
+      )
     end
   end
 end
