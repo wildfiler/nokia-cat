@@ -1,0 +1,28 @@
+class Cat
+  attr_sprite
+
+  def initialize(x, y)
+    @x = x
+    @y = y
+    @w = 16
+    @h = 16
+    @tile_y = 0
+  end
+
+  def tile_x
+    0.frame_index(4, 10, true) * 16
+  end
+
+  def draw_override ffi_draw
+    ffi_draw.draw_sprite_3(
+      x, y, w, h,
+      "sprites/cat2.png",
+      angle,
+      a, r, g, b,
+      tile_x, tile_y, 16, 16,
+      !!flip_horizontally, !!flip_vertically,
+      angle_anchor_x, angle_anchor_y,
+      source_x, source_y, source_w, source_h,
+    )
+  end
+end
