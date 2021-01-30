@@ -1,6 +1,8 @@
 class Cat
   attr_sprite
 
+  attr_accessor :lives, :food
+
   def initialize(x, y)
     @x = x
     @y = y
@@ -9,6 +11,8 @@ class Cat
     @tile_y = 0
     @jump = false
     @fall = false
+    @lives = 0
+    @food = 0
   end
 
   def on_ground
