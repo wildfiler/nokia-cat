@@ -11,7 +11,7 @@ class Cat
     @tile_y = 0
     @jump = false
     @fall = false
-    @lives = 0
+    @lives = 9
     @food = 0
   end
 
