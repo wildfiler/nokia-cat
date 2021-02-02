@@ -225,35 +225,35 @@ module GTK
                          source_h: NOKIA_HEIGHT,
                          path: :nokia }
 
-      if !@args.state.overlay_rendered
-        (NOKIA_HEIGHT + 1).map_with_index do |i|
-          @args.outputs.static_lines << {
-            x:  NOKIA_X_OFFSET,
-            y:  NOKIA_Y_OFFSET + (i * NOKIA_ZOOM),
-            x2: NOKIA_X_OFFSET + NOKIA_ZOOMED_WIDTH,
-            y2: NOKIA_Y_OFFSET + (i * NOKIA_ZOOM),
-            r: 199,
-            g: 240,
-            b: 216,
-            a: 100
-          }.line
-        end
-
-        (NOKIA_WIDTH + 1).map_with_index do |i|
-          @args.outputs.static_lines << {
-            x:  NOKIA_X_OFFSET + (i * NOKIA_ZOOM),
-            y:  NOKIA_Y_OFFSET,
-            x2: NOKIA_X_OFFSET + (i * NOKIA_ZOOM),
-            y2: NOKIA_Y_OFFSET + NOKIA_ZOOMED_HEIGHT,
-            r: 199,
-            g: 240,
-            b: 216,
-            a: 100
-          }.line
-        end
-
-        @args.state.overlay_rendered = true
-      end
+      # if !@args.state.overlay_rendered
+      #   (NOKIA_HEIGHT + 1).map_with_index do |i|
+      #     @args.outputs.static_lines << {
+      #       x:  NOKIA_X_OFFSET,
+      #       y:  NOKIA_Y_OFFSET + (i * NOKIA_ZOOM),
+      #       x2: NOKIA_X_OFFSET + NOKIA_ZOOMED_WIDTH,
+      #       y2: NOKIA_Y_OFFSET + (i * NOKIA_ZOOM),
+      #       r: 199,
+      #       g: 240,
+      #       b: 216,
+      #       a: 100
+      #     }.line
+      #   end
+      #
+      #   (NOKIA_WIDTH + 1).map_with_index do |i|
+      #     @args.outputs.static_lines << {
+      #       x:  NOKIA_X_OFFSET + (i * NOKIA_ZOOM),
+      #       y:  NOKIA_Y_OFFSET,
+      #       x2: NOKIA_X_OFFSET + (i * NOKIA_ZOOM),
+      #       y2: NOKIA_Y_OFFSET + NOKIA_ZOOMED_HEIGHT,
+      #       r: 199,
+      #       g: 240,
+      #       b: 216,
+      #       a: 100
+      #     }.line
+      #   end
+      #
+      #   @args.state.overlay_rendered = true
+      # end
     end
   end
 end

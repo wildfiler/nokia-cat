@@ -1,82 +1,91 @@
 require 'app/nokia.rb'
-require 'app/cat.rb'
-require 'app/ground.rb'
-require 'app/ground_tile.rb'
-require 'app/info_bar.rb'
 
-class Cactus
-  attr_sprite
+require 'app/bubble.rb'
+require 'app/fish.rb'
+require 'app/fishing_frame.rb'
+require 'app/fishing_hook.rb'
+require 'app/weed.rb'
 
-  def initialize(x, y)
-    @x = x
-    @y = y
-  end
-
-  def move
-    @x -= 1
-  end
-
-  def visible?
-    @x > -16
-  end
-
-  def draw_override ffi_draw
-    ffi_draw.draw_sprite_3(
-      x, y, 16, 16,
-      "sprites/cactus.png",
-      0,
-      255, 255, 255, 255,
-      0, 0, 16, 16,
-      false, false,
-      0, 0,
-      0, 0, -1, -1,
-    )
-  end
-end
 
 def tick args
   if args.state.tick_count == 0
-    args.state.cat = Cat.new(4, 5)
-    args.state.ground_tiles = Array.new(60) { |x| GroundTile.new(x * 16, rand(4)) }
-    args.state.ground = Ground.new(args.state.ground_tiles)
-    args.state.infobar = InfoBar.new(46, 38)
-    args.state.cactuses = [Cactus.new(64, 5)]
-    args.state.speed = 5
-  end
-
-  if args.state.tick_count % 12 == 0
-    args.state.speed.times do
-      args.state.ground.move
-      args.state.cactuses.each(&:move)
+    args.state.frame = FishingFrame.new
+    args.state.hook = FishingHook.new(40)
+    args.state.fish = Fish.new(60, 24)
+    args.state.bubbles = [
+    ]
+    args.state.bubbles_top = [
+    ]
+    args.state.weeds = 5.times.map do |i|
+      Weed.new(45 + i * 7, 2, rand(4))
     end
-    args.state.cactuses.delete_if { |cactus| !cactus.visible? }
+    args.state.progress = 10
   end
 
-  if args.state.tick_count.zmod?(16 * 4) && rand(2) == 0
-    args.state.cactuses.push(Cactus.new(84, 5))
-  end
+  if args.state.tick_count.zmod?(20)
+    args.state.bubbles.each do |bubble|
+      bubble.y += 1 if rand > 0.1
+      bubble.x += 1.rand_sign if rand > 0.7
+      bubble.x = bubble.x.clamp(45, 83)
+    end
 
-  args.state.cat.tick args
+    args.state.bubbles_top.each do |bubble|
+      bubble.y += 1 if rand > 0.1
+      bubble.x += 1.rand_sign if rand > 0.7
+      bubble.x = bubble.x.clamp(45, 83)
+    end
+
+    args.state.bubbles.delete_if { |bubble| bubble.y > 47 }
+
+    if rand > 0.8
+      if rand > 0.5
+        args.state.bubbles << Bubble.new(45 + rand(37), -6, rand > 0.5 ? :small : :big)
+      else
+        args.state.bubbles_top << Bubble.new(45 + rand(37), -6, rand > 0.5 ? :small : :big)
+      end
+    end
+
+    args.state.hook.y -= 1
+
+    if rand > 0.3
+      args.state.fish.y += 1.rand_sign
+      args.state.fish.x += 1.rand_sign if rand > 0.3
+
+      args.state.fish.y = args.state.fish.y.clamp(5, 35)
+      args.state.fish.x = args.state.fish.x.clamp(50, 60)
+    end
+
+    if 1.seconds.elapsed?
+
+      if [0, args.state.fish.y, 2, 13].intersect_rect?([0, args.state.hook.y, 2, 10])
+        args.state.progress += 1
+      else
+        args.state.progress -= 1
+      end
+
+      args.state.progress = args.state.progress.clamp(0, 38)
+    end
+  end
 
   if args.inputs.keyboard.key_down.up
-    args.state.speed += 1
+    args.state.hook.y += 1
   end
 
   if args.inputs.keyboard.key_down.down
-    args.state.speed -= 1
+    args.state.hook.y -= 1
   end
 
-  if args.inputs.keyboard.key_down.space && args.state.cat.on_ground
-    args.state.cat.jump!
-  end
+  args.state.hook.y = args.state.hook.y.clamp(0, 40)
 
-  args.nokia.sprites << args.state.ground
-  args.nokia.sprites << args.state.cactuses
-  args.nokia.sprites << args.state.cat
-  args.nokia.sprites << args.state.infobar
+  args.nokia.sprites << args.state.bubbles
+  args.nokia.sprites << args.state.hook
+  args.nokia.sprites << args.state.fish
+  args.nokia.sprites << args.state.bubbles_top
+  args.nokia.sprites << args.state.weeds
+  args.nokia.sprites << args.state.frame
+  args.nokia.solids << [38, 5, 2, args.state.progress] if args.state.progress > 0
 
-  $gtk.args.outputs.labels << { x: 8, y: 720 - 28, text: "#{$gtk.args.gtk.current_framerate}fps", r: 255}
-  $gtk.args.outputs.labels << { x: 8, y: 720 - 56, text: "#{    args.state.speed }", r: 255}
+  args.outputs.labels << { x: 8, y: 720 - 28, text: "#{$gtk.args.gtk.current_framerate.to_i}fps", r: 255 }
 end
 
 $gtk.reset
