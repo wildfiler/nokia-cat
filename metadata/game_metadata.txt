@@ -1,0 +1,6 @@
+devid=wildfiler
+devtitle=Ivan Arakcheiev
+gameid=fishercat-3310
+gametitle=Fishercat 3310
+version=0.1
+icon=metadata/icon.png

@@ -1,4 +1,8 @@
 class FishingScene
+  def initialize(next_scene)
+    @return_scene = next_scene
+  end
+
   def init(args)
     args.state.frame = FishingFrame.new
     args.state.hook = FishingHook.new(40)
@@ -10,7 +14,13 @@ class FishingScene
     args.state.weeds = 5.times.map do |i|
       Weed.new(45 + i * 7, 2, rand(4))
     end
-    args.state.progress = 10
+    @progress = 10
+  end
+
+  def next_scene
+    if @progress >= 38
+      @return_scene
+    end
   end
 
   def tick(args)
@@ -50,12 +60,12 @@ class FishingScene
       if 1.seconds.elapsed?
 
         if [0, args.state.fish.y, 2, 13].intersect_rect?([0, args.state.hook.y, 2, 10])
-          args.state.progress += 1
+          @progress += 1
         else
-          args.state.progress -= 1
+          @progress -= 1
         end
 
-        args.state.progress = args.state.progress.clamp(0, 38)
+        @progress = @progress.clamp(0, 38)
       end
     end
 
@@ -75,6 +85,6 @@ class FishingScene
     args.nokia.sprites << args.state.bubbles_top
     args.nokia.sprites << args.state.weeds
     args.nokia.sprites << args.state.frame
-    args.nokia.solids << [38, 5, 2, args.state.progress] if args.state.progress > 0
+    args.nokia.solids << [38, 5, 2, @progress] if @progress > 0
   end
 end

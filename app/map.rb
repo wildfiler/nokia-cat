@@ -1,4 +1,6 @@
-require 'app/ground_tile.rb'
+require 'app/tile.rb'
+require 'app/bridge.rb'
+require 'app/fishing_spot.rb'
 
 class Map
   attr_reader :width, :height
@@ -22,6 +24,10 @@ class Map
     @collisions.dig(y, x)
   end
 
+  def passable?(x, y)
+    !collisions(x, y) || [34, 35, 36, 37].include?(object(x, y)&.type)
+  end
+
   def load
     map_csv = $gtk.read_file("maps/map_ground.csv").lines.reverse.map { |line| line.strip.split(',').map(&:to_i)}
 
@@ -29,7 +35,7 @@ class Map
       tiles.map.with_index do |tile_type, x|
         next if tile_type.negative?
 
-        GroundTile.new(x * 32, y * 32, tile_type)
+        Tile.new(x, y, tile_type)
       end
     end
 
@@ -42,7 +48,14 @@ class Map
       tiles.map.with_index do |tile_type, x|
         next if tile_type.negative?
 
-        GroundTile.new(x * 32, y * 32, tile_type)
+        case tile_type
+        when 62
+          FishingSpot.new(x, y, tile_type)
+        when 34, 35, 36, 37
+          Bridge.new(x, y, tile_type)
+        else
+          Tile.new(x, y, tile_type)
+        end
       end
     end
 

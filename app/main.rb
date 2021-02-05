@@ -15,6 +15,13 @@ def tick args
     args.state.scene.init(args)
   end
 
+  next_scene = args.state.scene.next_scene
+
+  if next_scene
+    args.state.scene = next_scene
+    next_scene.init(args)
+  end
+
   args.state.scene.tick(args)
 
   args.outputs.labels << { x: 8, y: 720 - 28, text: "#{$gtk.args.gtk.current_framerate.to_i}fps", r: 255 }

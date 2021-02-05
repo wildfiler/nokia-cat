@@ -15,9 +15,15 @@ class Cat
   end
 
   def move(dx, dy)
-    return if map.collisions(x + dx, y + dy)
+    new_x = x + dx
+    new_y = y + dy
+    passable = map.passable?(new_x, new_y)
 
-    @x += dx
-    @y += dy
+    if passable
+      @x += dx
+      @y += dy
+
+      map.object(x, y)&.events
+    end
   end
 end

@@ -1,4 +1,4 @@
-class GroundTile
+class Tile
   attr_reader :x, :y, :type
   def initialize(x, y, type)
     @x = x
@@ -13,4 +13,10 @@ class GroundTile
   def tile_y
     @tile_y ||= (type / 10).to_i * 13
   end
+
+  def passable?
+    true
+  end
+
+  def events; end
 end

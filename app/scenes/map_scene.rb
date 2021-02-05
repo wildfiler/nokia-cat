@@ -11,26 +11,44 @@ class MapScene
     @camera = Camera.new(10, 10)
     @camera.map = @map
     @camera.cat = @cat
-
     camera.follow(cat)
+    @go_fish = false
   end
 
   def init(args)
 
   end
 
+  def next_scene
+    if @go_fish
+      @go_fish = false
+      FishingScene.new(self)
+    end
+  end
+
   def tick(args)
+    events = nil
+
     if args.inputs.keyboard.key_down.left
-      cat.move(-1, 0)
+      events = cat.move(-1, 0)
     end
     if args.inputs.keyboard.key_down.right
-      cat.move(1, 0)
+      events = cat.move(1, 0)
     end
     if args.inputs.keyboard.key_down.up
-      cat.move(0, 1)
+      events = cat.move(0, 1)
     end
     if args.inputs.keyboard.key_down.down
-      cat.move(0, -1)
+      events = cat.move(0, -1)
+    end
+
+    if events && !events.empty?
+      events.each do |event|
+        case event
+        when :go_fish
+          @go_fish = true
+        end
+      end
     end
 
     args.nokia.sprites << @camera
