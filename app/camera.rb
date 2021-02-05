@@ -24,17 +24,17 @@ class Camera
       end
     end
 
-    draw_sprite(ffi_draw, cat, cat.x - start_x, cat.y - start_y)
+    draw_sprite(ffi_draw, cat, cat.x - start_x, cat.y - start_y, flip: cat.flip)
   end
 
-  def draw_sprite(ffi_draw, tile, screen_x, screen_y)
+  def draw_sprite(ffi_draw, tile, screen_x, screen_y, flip: false)
     ffi_draw.draw_sprite_3(
       (screen_x) * 13, screen_y * 13, 13, 13,
       "sprites/forest.png",
       0,
       255, 255, 255, 255,
       tile.tile_x, tile.tile_y, 13, 13,
-      false, false,
+      flip, false,
       0, 0,
       0, 0, -1, -1,
     )

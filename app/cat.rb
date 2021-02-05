@@ -1,9 +1,10 @@
 class Cat
-  attr_reader :x, :y, :map
+  attr_reader :x, :y, :map, :flip
   def initialize(x, y, map)
     @x = x
     @y = y
     @map = map
+    @flip = true
   end
 
   def tile_x
@@ -22,6 +23,12 @@ class Cat
     if passable
       @x += dx
       @y += dy
+
+      if dx.positive?
+        @flip = true
+      elsif dx.negative?
+        @flip = false
+      end
 
       map.object(x, y)&.events
     end
