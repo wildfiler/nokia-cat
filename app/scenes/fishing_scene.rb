@@ -9,10 +9,10 @@ class FishingScene
     @fish_type = rand(4)
     @start_at = Kernel.tick_count
     @frame = FishingFrame.new
-    @hook = FishingHook.new(40)
+    @hook = FishingHook.new(40, 0, 44)
     @fish = Fish.new(60, 5 + rand(30), fish_type)
-    @bubbles = []
-    @bubbles_top = []
+    @bubbles = rand(10).map { random_bubble }
+    @bubbles_top = rand(10).map { random_bubble }
     @weeds = 5.times.map do |i|
       Weed.new(45 + i * 7, 2, rand(4))
     end
@@ -31,50 +31,6 @@ class FishingScene
   end
 
   def tick(args)
-    if args.state.tick_count.zmod?(20)
-      bubbles.each do |bubble|
-        bubble.y += 1 if rand > 0.1
-        bubble.x += 1.rand_sign if rand > 0.7
-        bubble.x = bubble.x.clamp(45, 83)
-      end
-
-      bubbles_top.each do |bubble|
-        bubble.y += 1 if rand > 0.1
-        bubble.x += 1.rand_sign if rand > 0.7
-        bubble.x = bubble.x.clamp(45, 83)
-      end
-
-      bubbles.delete_if { |bubble| bubble.y > 47 }
-
-      if rand > 0.8
-        if rand > 0.5
-          bubbles << Bubble.new(45 + rand(37), -6, rand > 0.5 ? :small : :big)
-        else
-          bubbles_top << Bubble.new(45 + rand(37), -6, rand > 0.5 ? :small : :big)
-        end
-      end
-
-      hook.y -= 1
-
-      if rand > 0.3
-        fish.y += 1.rand_sign
-        fish.x += 1.rand_sign if rand > 0.3
-
-        fish.y = fish.y.clamp(5, 35)
-        fish.x = fish.x.clamp(50, 60)
-      end
-
-      if (@start_at + 2.seconds).elapsed?
-        if [0, fish.y, 2, 13].intersect_rect?([0, hook.y, 2, 10])
-          @progress += 1
-        else
-          @progress -= 1
-        end
-
-        @progress = @progress.clamp(0, 38)
-      end
-    end
-
     if args.inputs.keyboard.key_down.up
       hook.y += 1
     end
@@ -83,14 +39,57 @@ class FishingScene
       hook.y -= 1
     end
 
-    hook.y = hook.y.clamp(0, 40)
+    if args.state.tick_count.zmod?(20)
+      move_bubbles
+      generate_bubble
+      fish.move
 
+      hook.y -= 1
+
+      if (@start_at + 2.seconds).elapsed?
+        decay_speed = (@start_at + 20.seconds).elapsed? ? 2 : 1
+        if fish.body_rect.intersect_rect?(hook.body_rect)
+          @progress += 1
+        else
+          @progress -= decay_speed
+        end
+
+        @progress = @progress.clamp(0, 38)
+      end
+    end
+
+    render(args)
+  end
+
+  private
+
+  def generate_bubble
+    if rand > 0.8
+      if rand > 0.5
+        bubbles << random_bubble
+      else
+        bubbles_top << random_bubble
+      end
+    end
+  end
+
+  def render(args)
     args.nokia.sprites << bubbles
     args.nokia.sprites << hook
     args.nokia.sprites << fish
     args.nokia.sprites << bubbles_top
     args.nokia.sprites << weeds
     args.nokia.sprites << frame
-    args.nokia.solids << [38, 5, 2, @progress] if @progress > 0
+    args.nokia.solids << [38, 5, 2, progress] if progress > 0
+  end
+
+  def move_bubbles
+    bubbles.each { |bubble| bubble.move }
+    bubbles_top.each { |bubble| bubble.move }
+    bubbles.delete_if { |bubble| bubble.y > 47 }
+  end
+
+  def random_bubble
+    Bubble.new(45 + rand(37), rand(30) - 6, rand > 0.5 ? :small : :big, 45, 83)
   end
 end

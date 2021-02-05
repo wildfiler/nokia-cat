@@ -1,10 +1,16 @@
 class FishingHook
   attr_sprite
 
-  def initialize(y)
+  def initialize(y, min_y, max_y)
     @y = y
+    @min_y = min_y
+    @max_y = max_y
 
     @h_h = 10
+  end
+
+  def y=(new_y)
+    @y = new_y.clamp(@min_y, @max_y)
   end
 
   def h
@@ -15,9 +21,13 @@ class FishingHook
     5 + y
   end
 
+  def body_rect
+    [0, h_y, 10, @h_h]
+  end
+
   def draw_override(ffi_draw)
     ffi_draw.draw_sprite_3(
-      45, 4 + y, 8, h,
+      45, h_y, 8, h,
       "sprites/fishing-hook.png",
       0,
       255, 255, 255, 255,
