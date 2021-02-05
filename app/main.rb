@@ -6,6 +6,7 @@ require 'app/fishing_frame.rb'
 require 'app/fishing_hook.rb'
 require 'app/weed.rb'
 require 'app/scenes/fishing_scene.rb'
+require 'app/scenes/fishing_finished_scene.rb'
 require 'app/scenes/map_scene.rb'
 
 def tick args

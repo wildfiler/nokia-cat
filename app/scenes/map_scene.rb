@@ -13,6 +13,7 @@ class MapScene
     @camera.cat = @cat
     camera.follow(cat)
     @go_fish = false
+    @test_scene = false
   end
 
   def init(args)
@@ -23,6 +24,9 @@ class MapScene
     if @go_fish
       @go_fish = false
       FishingScene.new(self)
+    elsif @test_scene
+      @test_scene = false
+      FishingFinishedScene.new(self, :success, rand(4))
     end
   end
 
@@ -40,6 +44,10 @@ class MapScene
     end
     if args.inputs.keyboard.key_down.down
       events = cat.move(0, -1)
+    end
+
+    if args.inputs.keyboard.key_down.f
+      @test_scene = true
     end
 
     if events && !events.empty?
