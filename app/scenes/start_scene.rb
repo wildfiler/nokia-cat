@@ -24,6 +24,16 @@ class StartScene
     if args.inputs.keyboard.key_up.space
       @button.toggle
       @start_at = args.state.tick_count + 0.2.seconds
+      args.audio[0] = {
+        input: "sounds/blip5.wav",
+        x: 0,
+        y: 0,
+        z: 0.0,
+        gain: 1.0,
+        pitch: 1.0,
+        looping: false,
+        paused: false
+      }
     end
 
     args.nokia.sprites << [@bg, @button]
