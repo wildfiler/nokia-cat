@@ -31,3 +31,10 @@ def tick args
 end
 
 $gtk.reset
+
+
+class Numeric
+  def +(a)
+    self + a
+  end
+end

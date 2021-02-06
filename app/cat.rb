@@ -1,10 +1,24 @@
 class Cat
-  attr_reader :x, :y, :map, :flip
+  attr_reader :x, :y, :map, :flip, :gold
+
   def initialize(x, y, map)
     @x = x
     @y = y
     @map = map
     @flip = true
+    @gold = 0
+  end
+
+  def inventory
+    @inventory ||= Hash.new { |hash, key| hash[key] = 0 }
+  end
+
+  def clear_inventory
+    @inventory = nil
+  end
+
+  def catch(fish_type)
+    inventory[fish_type] += 1
   end
 
   def tile_x

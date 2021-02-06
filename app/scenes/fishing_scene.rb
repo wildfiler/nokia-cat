@@ -1,11 +1,12 @@
 require 'app/scenes/fishing_finished_scene.rb'
 
 class FishingScene
-  attr_reader :fish_type, :frame, :fish, :bubbles, :bubbles_top, :weeds, :hook
+  attr_reader :fish_type, :frame, :fish, :bubbles, :bubbles_top, :weeds, :hook, :cat
   attr_accessor :progress
 
-  def initialize(next_scene)
+  def initialize(next_scene, cat)
     @return_scene = next_scene
+    @cat = cat
     @fish_type = rand(4)
     @start_at = Kernel.tick_count
     @frame = FishingFrame.new
@@ -34,6 +35,7 @@ class FishingScene
 
   def next_scene
     if progress >= 38
+      cat.catch(fish_type)
       FishingFinishedScene.new(@return_scene, :success, fish_type)
     elsif progress <= 0
       FishingFinishedScene.new(@return_scene, :fail, fish_type)
