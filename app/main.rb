@@ -8,11 +8,13 @@ require 'app/weed.rb'
 require 'app/scenes/fishing_scene.rb'
 require 'app/scenes/fishing_finished_scene.rb'
 require 'app/scenes/map_scene.rb'
+require 'app/scenes/start_scene.rb'
 
 def tick args
   if args.state.tick_count == 0
     # args.state.scene = FishingScene.new
-    args.state.scene = MapScene.new
+    # args.state.scene = MapScene.new
+    args.state.scene = StartScene.new
     args.state.scene.init(args)
   end
 
