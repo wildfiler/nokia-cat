@@ -20,6 +20,16 @@ class FishingScene
   end
 
   def init(args)
+    args.audio[0] = {
+      input: "sounds/odd1.wav",
+      x: 0,
+      y: 0,
+      z: 0.0,
+      gain: 1.0,
+      pitch: 1.0,
+      looping: false,
+      paused: false
+    }
   end
 
   def next_scene
@@ -28,6 +38,32 @@ class FishingScene
     elsif progress <= 0
       FishingFinishedScene.new(@return_scene, :fail, fish_type)
     end
+  end
+
+  def play_looser_music(args)
+    args.audio[0] = {
+      input: "sounds/negative1.wav",
+      x: 0,
+      y: 0,
+      z: 0.0,
+      gain: 1.0,
+      pitch: 1.0,
+      looping: false,
+      paused: false
+    }
+  end
+
+  def play_winner_music(args)
+    args.audio[0] = {
+      input: "sounds/bad_melody.wav",
+      x: 0,
+      y: 0,
+      z: 0.0,
+      gain: 1.0,
+      pitch: 1.0,
+      looping: false,
+      paused: false
+    }
   end
 
   def tick(args)
@@ -58,6 +94,11 @@ class FishingScene
       end
     end
 
+    if @progress >= 38
+      play_winner_music(args)
+    elsif @progress <= 0
+      play_looser_music(args)
+    end
     render(args)
   end
 
