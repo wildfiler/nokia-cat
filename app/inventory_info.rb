@@ -1,8 +1,9 @@
 class InventoryInfo
   attr_sprite
-  attr_reader :day_text, :gold_text, :cat, :offset
+  attr_reader :day_text, :gold_text, :cat, :offset, :world_clock
 
-  def initialize(cat)
+  def initialize(world_clock, cat)
+    @world_clock = world_clock
     @cat = cat
     @day_text = Text.new("Day:")
     @gold_text = Text.new("Gold:")
@@ -29,7 +30,7 @@ class InventoryInfo
   def draw_override(ffi_draw)
     @day_text.draw(ffi_draw, 4, 37)
     @gold_text.draw(ffi_draw, 4, 19)
-    Text.new("1/5", align: :right).draw(ffi_draw, 29, 29)
+    Text.new("#{world_clock.day}/5", align: :right).draw(ffi_draw, 29, 29)
     Text.new(cat.gold.to_s, align: :right).draw(ffi_draw, 29, 11)
 
     y = 45 + @offset

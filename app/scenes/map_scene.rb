@@ -1,17 +1,22 @@
 require 'app/map.rb'
 require 'app/camera.rb'
 require 'app/cat.rb'
+require 'app/sun.rb'
+require 'app/world_shadow.rb'
 require 'app/scenes/inventory_scene.rb'
 require 'app/scenes/seller_scene.rb'
+require 'app/scenes/end_scene.rb'
 
 class MapScene
-  attr_reader :map, :camera, :cat
+  attr_reader :map, :camera, :cat, :world_clock
 
-  def initialize
+  def initialize(world_clock)
+    @world_clock = world_clock
     @map = Map.new
     @cat = Cat.new(3, 2, @map)
+    @sun = Sun.new(world_clock)
+    @shadow = WorldShadow.new(world_clock, map, cat)
     @camera = Camera.new(10, 10)
-    @inventory = InventoryScene.new(self, cat)
     @camera.map = @map
     @camera.cat = @cat
     camera.follow(cat)
@@ -21,11 +26,14 @@ class MapScene
   end
 
   def init(args)
-
+    world_clock.unpause!
   end
 
   def next_scene
     case
+    when @end_game
+      world_clock.pause!
+      EndScene.new(cat)
     when @go_fish
       @go_fish = false
       FishingScene.new(self, cat)
@@ -34,9 +42,10 @@ class MapScene
       SellerScene.new(self, cat)
     when @show_inventory_at&.elapsed?
       @show_inventory_at = nil
-      @inventory
+      InventoryScene.new(self, world_clock, cat)
     when @test_scene
       @test_scene = false
+      nil
     end
   end
 
@@ -73,6 +82,7 @@ class MapScene
 
     if args.inputs.keyboard.key_down.f
       @test_scene = true
+      world_clock.jump
     end
 
     if events && !events.empty?
@@ -86,6 +96,10 @@ class MapScene
       end
     end
 
-    args.nokia.sprites << @camera
+    if world_clock.day > 5
+      @end_game = true
+    end
+
+    args.nokia.sprites << [@camera, @shadow, @sun]
   end
 end

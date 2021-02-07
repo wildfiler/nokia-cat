@@ -3,11 +3,12 @@ require 'app/inventory_info.rb'
 class InventoryScene
   attr_reader :info
 
-  def initialize(next_scene, cat)
+  def initialize(next_scene, world_clock, cat)
     @cat = cat
     @next_scene = next_scene
     @close_at = nil
-    @info = InventoryInfo.new(cat)
+    @world_clock = world_clock
+    @info = InventoryInfo.new(world_clock, cat)
   end
 
   def next_scene
@@ -18,6 +19,7 @@ class InventoryScene
   end
 
   def init(args)
+    @world_clock.pause!
   end
 
   def tick(args)

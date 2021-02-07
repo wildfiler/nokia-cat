@@ -8,11 +8,12 @@ class StartScene
   end
 
   def init(args)
+    args.state.world_clock.reset!
   end
 
   def next_scene
     if @start_at&.elapsed?
-      MapScene.new
+      @next_scene
     end
   end
 
@@ -34,6 +35,7 @@ class StartScene
         looping: false,
         paused: false
       }
+      @next_scene = MapScene.new(args.state.world_clock)
     end
 
     args.nokia.sprites << [@bg, @button]
