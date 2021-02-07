@@ -1,7 +1,7 @@
 class Text
   WIDTH_RULES = {
     [37] => 2,
-    [31, 35, 45, 64, 65] => 3,
+    [-1, 31, 35, 45, 64, 65] => 3,
     [8, 19, 34, 43, 47, 53, 84, 85] => 4,
     [12, 22, 38, 48] => 6,
     (0..25).to_a => 5,
@@ -31,6 +31,8 @@ class Text
       when 58 then 65
       when 59 then 64
       when 47 then 84
+      when 32 then -1
+      when 36 then 93
       when 48..57
         char_num + 4
       else
@@ -57,16 +59,18 @@ class Text
     end
 
     x_offsets.each do |(x_offset, width)|
-      ffi_draw.draw_sprite_3(
-        current_x, y, 7, 11,
-        "fonts/Efforts_Pro_dark @somepx.png",
-        0,
-        255, 255, 255, 255,
-        x_offset * 7, 0, 7, 11,
-        false, false,
-        0, 0,
-        0, 0, -1, -1,
-      )
+      if x_offset != -1
+        ffi_draw.draw_sprite_3(
+          current_x, y, 7, 11,
+          "fonts/Efforts_Pro_dark @somepx.png",
+          0,
+          255, 255, 255, 255,
+          x_offset * 7, 0, 7, 11,
+          false, false,
+          0, 0,
+          0, 0, -1, -1,
+        )
+      end
 
       current_x += width
     end

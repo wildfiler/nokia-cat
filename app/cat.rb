@@ -17,6 +17,11 @@ class Cat
     @inventory = nil
   end
 
+  def sell_inventory(price)
+    @gold += price
+    clear_inventory
+  end
+
   def catch(fish_type)
     inventory[fish_type] += 1
   end

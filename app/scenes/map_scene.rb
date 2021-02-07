@@ -2,6 +2,7 @@ require 'app/map.rb'
 require 'app/camera.rb'
 require 'app/cat.rb'
 require 'app/scenes/inventory_scene.rb'
+require 'app/scenes/seller_scene.rb'
 
 class MapScene
   attr_reader :map, :camera, :cat
@@ -24,12 +25,18 @@ class MapScene
   end
 
   def next_scene
-    if @go_fish
+    case
+    when @go_fish
       @go_fish = false
       FishingScene.new(self, cat)
-    elsif @show_inventory_at&.elapsed?
+    when @go_market
+      @go_market = false
+      SellerScene.new(self, cat)
+    when @show_inventory_at&.elapsed?
       @show_inventory_at = nil
       @inventory
+    when @test_scene
+      @test_scene = false
     end
   end
 
@@ -73,6 +80,8 @@ class MapScene
         case event
         when :go_fish
           @go_fish = true
+        when :go_market
+          @go_market = true
         end
       end
     end

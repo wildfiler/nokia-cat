@@ -1,6 +1,7 @@
 require 'app/tile.rb'
 require 'app/bridge.rb'
 require 'app/fishing_spot.rb'
+require 'app/fish_market_entry.rb'
 
 class Map
   attr_reader :width, :height
@@ -53,6 +54,8 @@ class Map
           FishingSpot.new(x, y, tile_type)
         when 34, 35, 36, 37
           Bridge.new(x, y, tile_type)
+        when 18
+          FishMarketEntry.new(x, y, tile_type)
         else
           Tile.new(x, y, tile_type)
         end
